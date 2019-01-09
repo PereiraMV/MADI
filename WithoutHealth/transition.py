@@ -83,7 +83,7 @@ def action(stateA,listState,grille):
 	if stateA.stateType=='S':
 		proba=[1]
 		if stateA.sword==1 :
-			statesB.append(listState[(stateA.position,stateA.sword,stateA.key,stateA.sword,0)])
+			statesB.append(listState[(stateA.position,stateA.sword,stateA.key,stateA.tresor,0)])
 			
 		else:
 			statesB.append(listState[(stateA.position,1,stateA.key,stateA.tresor,0)])
@@ -108,7 +108,7 @@ def action(stateA,listState,grille):
 		proba=[0.1,0.3,0.6]
 		# death , teleport begining , nothing
 		statesB.append(listState[((-1,-1),-1,-1,-1,1)])
-		statesB.append(listState[((grille.size[0]-1,grille.size[1]-1),stateA.sword,stateA.key,stateA.sword,1)])
+		statesB.append(listState[((grille.size[0]-1,grille.size[1]-1),stateA.sword,stateA.key,stateA.tresor,1)])
 		statesB.append(listState[(stateA.position,stateA.sword,stateA.key,stateA.tresor,0)])
 		transitions.append(transition(grille,stateA,statesB,proba,reward))
 
