@@ -3,6 +3,15 @@
 
 """
 
+import time
+def timer(f):#décorateur pour timer du temps que prend le picross à s'executer
+    def wrapper(*args):
+        t0=time.time()
+        res=f(*args)
+        t='%.2f' % (time.time()-t0)
+        print("Temps d'execution : ",t," secondes")
+        return res
+    return wrapper
 
 
 class grille:
@@ -89,12 +98,8 @@ class grille:
 
 
 
-
-def play(grille,player):
-	return
-
-
 if __name__ == "__main__":
+    
 	grilleA=grille("exemple2.txt")
 	#print(grilleA.checkCell((0,0)))
 	print(grilleA.size,grilleA.tab)

@@ -110,7 +110,7 @@ class PDM:
 					if nb<=sumi:
 						indice=i
 						break
-				statePlayer=states[i]
+				statePlayer=states[indice]
 				self.playerPos=statePlayer.position
 				
 			if statePlayer.type==2:
