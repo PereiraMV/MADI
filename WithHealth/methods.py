@@ -2,8 +2,10 @@ from PDM import *
 
 import numpy as np
 import time 
-#from gurobipy import *
+from gurobipy import *
 import random
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 
 def timer(f):#decorateur pour timer du temps que prend le picross a s executer
@@ -48,15 +50,16 @@ def iteration_value(pdm,gam):
 		if allEq:
 			break
 			
-	print("compteur "+str(cpt))
-	for i in range(pdm.grille.size[0]):
-			for j in range(pdm.grille.size[1]):
-				if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W':
-					#position sword key tresor type
-					print pdm.listState[((i,j),0,1,1,1,0)].optimal,
-				else:
-					print 4,
-			print
+#	print("compteur "+str(cpt))
+#	for i in range(pdm.grille.size[0]):
+#			for j in range(pdm.grille.size[1]):
+#				if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W':
+#					#position sword key tresor type
+#					print pdm.listState[((i,j),0,1,1,1,0)].optimal,
+#				else:
+#					print 4,
+#			print
+	affichage_of_play(pdm,((0,0),0,1,1,1,0))
 
 	return
 @timer
@@ -132,9 +135,49 @@ def optimal_Pl(pdm,gam):
 			else:
 				print 4,
 		print
-
 	return 
 
+def affichage_of_play(pdm,key):#key= cle de listState
+#	print pdm.listState
+	toprint={0:"^",1:"v",2:"<",3:">"}
+	fig, ax = plt.subplots()
+	posPlayer,sword,key,health,tresor,typee=key
+	for i in range(pdm.grille.size[0]):
+		for j in range(pdm.grille.size[1]):
+#			if i>1 or j>1:continue
+			az=pdm.grille.tab[i][j]
+			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W' :
+				#position sword key tresor type
+				az=pdm.listState[((i,j),sword,key,health,tresor,typee)].optimal
+				ax.scatter(j,pdm.grille.size[0]-i,marker=toprint[az],s=200)
+				print pdm.listState[((i,j),sword,key,health,tresor,typee)].optimal,
+			elif pdm.grille.tab[i][j]=='M':
+				ax.scatter(j,pdm.grille.size[0]-i,marker="_",s=400,color="k")
+			elif pdm.grille.tab[i][j]=='P':
+				ax.scatter(j,pdm.grille.size[0]-i,marker="$O$",s=400,color="b")
+			else:
+				ax.scatter(j,pdm.grille.size[0]-i,marker="s",s=400,color="k")
+				print 4,
+		print
+#	plt.imshow(m,interpolation="none")
+#	plt.show()
+#	#use marker "v ^ < > "
+#	fig, ax = plt.subplots()
+#	ax.scatter(posPlayer[1],posPlayer[0],marker='o',color='red',s=500)
+#	for i in range(len(pdm.grille.tab)):
+#		for j in range(len(pdm.grille.tab)):
+#			az=pdm.grille.tab[i][j]
+#			if az in toprint:
+#				az='$'+az+'$'
+#				if az=='$M$' : az='_'
+#				ax.scatter(j,i,marker=az,s=200)
+#	print posPlayer
+#	
+#	plt.imshow(m,cmap=cmap,norm=norm,interpolation="none")
+#	plt.show()
+	return
+    
+    
 def next_state(pdm,indice,stateA):
 	
 	transPlayer=pdm.listTrans[(stateA.position,stateA.sword,stateA.key,stateA.health,stateA.tresor,stateA.type)][indice]

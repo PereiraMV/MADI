@@ -2,6 +2,9 @@
 """
 
 """
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 import time
 def timer(f):#décorateur pour timer du temps que prend le picross à s'executer
@@ -95,12 +98,40 @@ class grille:
 					
 		return 
 
+	def affichage2(self,posPlayer):
+		change={'B':0,'W':1,'T':2,'E':3,'K':9,'R':5,'C':6,'S':7,'M':8,'P':4,'O':10}
+		toprint=['T','E','R','C','K','S','M','P','O']
+		m=self.tab[:][:]
+		new_m=[]
+		for i in m:
+			new_m.append(map(lambda x:change[x],i))
+		m=new_m
+				
+		fig, ax = plt.subplots()
+		m[posPlayer[0]][posPlayer[1]]=11
+		cmap=mpl.colors.ListedColormap(['w', 'k','w'])
+		bounds = np.array([0, 0.1, 1.1,2.1])
+		norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
+		ax.scatter(posPlayer[1],posPlayer[0],marker='o',color='red',s=500)
+		for i in range(len(self.tab)):
+			for j in range(len(self.tab)):
+				az=self.tab[i][j]
+				if az in toprint:
+					az='$'+az+'$'
+					if az=='$M$' : az='_'
+					ax.scatter(j,i,marker=az,s=200)
+		print posPlayer
+		
+		plt.imshow(m,cmap=cmap,norm=norm,interpolation="none")
+		plt.show()
+		
+	
 
 
 if __name__ == "__main__":
     
 	grilleA=grille("exemple2.txt")
 	#print(grilleA.checkCell((0,0)))
-	print(grilleA.size,grilleA.tab)
-	grilleA.affichage((0,0))
+#	print(grilleA.size,grilleA.tab)
+	grilleA.affichage2((0,0))
