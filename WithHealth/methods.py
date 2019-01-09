@@ -159,22 +159,6 @@ def affichage_of_play(pdm,key):#key= cle de listState
 				ax.scatter(j,pdm.grille.size[0]-i,marker="s",s=400,color="k")
 				print 4,
 		print
-#	plt.imshow(m,interpolation="none")
-#	plt.show()
-#	#use marker "v ^ < > "
-#	fig, ax = plt.subplots()
-#	ax.scatter(posPlayer[1],posPlayer[0],marker='o',color='red',s=500)
-#	for i in range(len(pdm.grille.tab)):
-#		for j in range(len(pdm.grille.tab)):
-#			az=pdm.grille.tab[i][j]
-#			if az in toprint:
-#				az='$'+az+'$'
-#				if az=='$M$' : az='_'
-#				ax.scatter(j,i,marker=az,s=200)
-#	print posPlayer
-#	
-#	plt.imshow(m,cmap=cmap,norm=norm,interpolation="none")
-#	plt.show()
 	return
     
     
