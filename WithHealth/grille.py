@@ -99,7 +99,8 @@ class grille:
 					
 		return 
 
-	def affichage(self,posPlayer,dual=False):
+	def affichage(self,posPlayer,withpolicy=False):
+#		plt.subplot(1,2,1)
 		change={'B':0,'W':1,'T':2,'E':3,'K':9,'R':5,'C':6,'S':7,'M':8,'P':4,'O':10}
 		toprint=['T','E','R','C','K','S','M','P','O']
 		m=self.tab[:][:]
@@ -107,28 +108,34 @@ class grille:
 		for i in m:
 			new_m.append(map(lambda x:change[x],i))
 		m=new_m
-				
-		fig, ax = plt.subplots()
-		if dual:
-			fig,ax=plt.subplot(1,2,1)
+		fig=None
+		ax1=None
+		ax2=None
+		
+		if not(withpolicy):
+			fig, ax1 = plt.subplots()
+		else:
+			fig, (ax1,ax2) = plt.subplots(1,2, figsize=(12, 5))
 		m[posPlayer[0]][posPlayer[1]]=11
 		cmap=mpl.colors.ListedColormap(['w', 'k','w'])
 		bounds = np.array([0, 0.1, 1.1,2.1])
 		norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
-		ax.scatter(posPlayer[1],posPlayer[0],marker='o',color='red',s=500)
+		ax1.scatter(posPlayer[1],posPlayer[0],marker='o',color='red',s=500)
 		for i in range(len(self.tab)):
 			for j in range(len(self.tab)):
 				az=self.tab[i][j]
 				if az in toprint:
 					az='$'+az+'$'
 					if az=='$M$' : az='_'
-					ax.scatter(j,i,marker=az,s=200)
-		print posPlayer
+					ax1.scatter(j,i,marker=az,s=200)
 		
-		plt.imshow(m,cmap=cmap,norm=norm,interpolation="none")
-		plt.show()
-		return fig,ax
+		
+#		plt.imshow(m,cmap=cmap,norm=norm,interpolation="none")
+		ax1.imshow(m,cmap=cmap,norm=norm,interpolation="none")
+		if not(withpolicy):
+			plt.show()
+		return ax2
 		
 	def generate_solvable(self,nb_line,nb_col,pw,po,pc,max_key,max_sword,max_portal,nb_try=30):
 		if nb_line<4 or nb_col<4:
@@ -247,4 +254,4 @@ if __name__ == "__main__":
 #	grilleA.affichage((0,0))
 	grilleA.generate_solvable(16,16,.3,.2,.1,1,1,3,nb_try=500)
 #	grilleA.is_solvable()
-	grilleA.affichage((0,0))
+	grilleA.affichage((15,15))

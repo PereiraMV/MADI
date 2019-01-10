@@ -140,18 +140,19 @@ def optimal_Pl(pdm,gam):
 #				print 4,
 #		print
 #	affichage_of_play(pdm,((0,0),0,1,1,1,0))
-	affichage_policy(pdm)
+#	affichage_policy(pdm)
 	return 
 
 def affichage_of_play(pdm,key,dual=False,ax=None,fig=None):#key= cle de listState
-#	print pdm.listState
-	
 	toprint={0:"^",1:"v",2:"<",3:">"}
 	toprint2=['g','r','m','y']
-	fig, ax = plt.subplots()
-	if dual:
-		plt.subplot(1,2,2)
+	
+	if not(dual):
+		fig, ax = plt.subplots()
 	posPlayer,sword,key,health,tresor,typee=key
+	if sword<0 or key<0 or health<0 or tresor<0:
+		return
+	typee=0
 	for i in range(pdm.grille.size[0]):
 		for j in range(pdm.grille.size[1]):
 #			if i>1 or j>1:continue
@@ -160,7 +161,7 @@ def affichage_of_play(pdm,key,dual=False,ax=None,fig=None):#key= cle de listStat
 				#position sword key tresor type
 				az=pdm.listState[((i,j),sword,key,health,tresor,typee)].optimal
 				ax.scatter(j,pdm.grille.size[0]-i,marker=toprint[az],s=200,color=toprint2[az])
-				print pdm.listState[((i,j),sword,key,health,tresor,typee)].optimal,
+#				print pdm.listState[((i,j),sword,key,health,tresor,typee)].optimal,
 
 			elif pdm.grille.tab[i][j]=='M':
 				ax.scatter(j,pdm.grille.size[0]-i,marker="_",s=400,color="k")
@@ -168,19 +169,22 @@ def affichage_of_play(pdm,key,dual=False,ax=None,fig=None):#key= cle de listStat
 				ax.scatter(j,pdm.grille.size[0]-i,marker="$O$",s=400,color="b")
 			else:
 				ax.scatter(j,pdm.grille.size[0]-i,marker="s",s=400,color="k")
-				print 4,
-		print
+#				print 4,
+#		print
+	plt.show()
 	return
 	
 def affichage_policy(pdm):
 	toplay={0:"z",1:"s",2:"q",3:"d"}
+	printer={'z':"Player goes top",'s':"Player goes down",'q':"Player goes left",'d':"Player goes Right"}
 	statePlayer=pdm.listState[((pdm.grille.size[0]-1,pdm.grille.size[1]-1),0,0,4,0,0)]
-	
-	print "player key "+str(statePlayer.key)+"player health "+str(statePlayer.health)+" player tresor "+str(statePlayer.tresor)+" player sword "+str(statePlayer.sword) 
+	print "\nActual state"
+	print "player key : "+str(statePlayer.key)+" player health : "+str(statePlayer.health)+" player tresor : "+str(statePlayer.tresor)+" player sword : "+str(statePlayer.sword) 
 	while (True):
-		pdm.grille.affichage(pdm.playerPos)
-#		affichage_of_play(pdm,((0,0),statePlayer.sword,statePlayer.key,statePlayer.health,statePlayer.tresor,statePlayer.type))
-	
+		
+		ax2=pdm.grille.affichage(pdm.playerPos,withpolicy=True)
+		affichage_of_play(pdm,((0,0),statePlayer.sword,statePlayer.key,statePlayer.health,statePlayer.tresor,statePlayer.type),ax=ax2,dual=True)
+
 		if statePlayer.type==0:
 			pc=-1
 			
@@ -189,7 +193,7 @@ def affichage_policy(pdm):
 				playerMove=raw_input("press Enter to continue")
 				playerMove=pdm.listState[(statePlayer.position,statePlayer.sword,statePlayer.key,statePlayer.health,statePlayer.tresor,statePlayer.type)].optimal
 				playerMove=toplay[playerMove]
-				print playerMove
+				print printer[playerMove]
 				if (playerMove=='z'):
 					if pdm.listTrans[(statePlayer.position,statePlayer.sword,statePlayer.key,statePlayer.health,statePlayer.tresor,0)][0]!=None:
 						pc=0
@@ -215,8 +219,6 @@ def affichage_policy(pdm):
 			proba=transPlayer.listProba
 			states=transPlayer.listState
 			nb=random.random()
-			print "nb rand= "+str(nb)+" len proba "+str(len(proba))
-			print proba
 			sumi=0
 			indice=-1
 #				list_indice=[i for i in range(len(proba))]
@@ -226,7 +228,7 @@ def affichage_policy(pdm):
 					indice=i
 					break
 #				indice=random.choice(list_indice,proba)
-			print(indice)
+			
 			statePlayer=states[indice]
 			pdm.playerPos=statePlayer.position
 			
@@ -238,8 +240,8 @@ def affichage_policy(pdm):
 			if statePlayer.stateType=="sucess":
 				print "you win"
 				break
-		print "player key "+str(statePlayer.key)+"player health"+str(statePlayer.health)+" player tresor "+str(statePlayer.tresor)+" player sword "+str(statePlayer.sword) 
-			
+		print "\nActual state"
+		print "player key : "+str(statePlayer.key)+" player health : "+str(statePlayer.health)+" player tresor : "+str(statePlayer.tresor)+" player sword : "+str(statePlayer.sword)			
 
 
 					
@@ -334,13 +336,29 @@ def Qlearning(pdm,gam,taux,timer):
 		print
 		
 	return
+def affichage_one_state_policy(pdm,key=0,health=4,tresor=0,sword=0):
+	sword,key,health,tresor
+	key=((0,0),sword,key,health,tresor,0)
+	affichage_of_play(pdm,key)
 
-grilleA=gr.grille("exemple2.txt")
-#grilleA.affichage((0,0))
-pdm=PDM(grilleA)
-#iteration_value(pdm,0.99)
-optimal_Pl(pdm,0.99)
-#Qlearning(pdm,0.99,lambda x:1.0/x,10000)
+if __name__ == "__main__":
+	#generate grille
+	grilleA=gr.grille("exemple2.txt")
+	grilleA.generate_solvable(4,4,.3,.2,.1,1,1,3,nb_try=500)
+	grilleA.affichage((grilleA.size[0]-1,grilleA.size[0]-1))
+
+	#Solve
+	pdm=PDM(grilleA)
+	
+#	iteration_value(pdm,0.99)
+	optimal_Pl(pdm,0.99)
+#	Qlearning(pdm,0.99,lambda x:1.0/x,10000)
+	
+	#affichage
+	affichage_policy(pdm)
+#	affichage_one_state_policy(pdm,key=0,health=4,tresor=0,sword=0)
+	
+	
 
 
 
