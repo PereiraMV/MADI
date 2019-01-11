@@ -247,112 +247,126 @@ def affichage_policy(pdm):
 					
 
 	return
-def next_state(pdm,indice,stateA):
+
+def next_state(Trans,indice,stateA):
 	
-	transPlayer=pdm.listTrans[(stateA.position,stateA.sword,stateA.key,stateA.health,stateA.tresor,stateA.type)][indice]
-	
+	transPlayer=Trans[(stateA.position,stateA.sword,stateA.key,stateA.health,stateA.tresor,stateA.type)][indice]
 	proba=transPlayer.listProba
 	states=transPlayer.listState
+	#print("position="+str(states[0].position))
 	nb=random.random()
 	#print "nb rand= "+str(nb)
 	sumi=0
 	indice2=-1
-	print(nb)
-	print(proba)
+	#print(nb)
+	#print(proba)
 	for i in range(len(proba)):
 		sumi=sumi+proba[i]
 		if nb<=sumi:
 			indice2=i
 			break
 #				indice=random.choice(list_indice,proba)
-	print("indice2   "+str(indice2))
+	#print("indice2   "+str(indice2))
 	stateB=states[indice2]
 	return (stateB,transPlayer.reward)
 
-def my_min(l):
-	toRet=[pdm.listTrans[(stateA.position,stateA.sword,stateA.key,stateA.health,stateA.tresor,stateA.type)][i] for i in range(l) if i!=None ]
-	return np.argmin(toRet)
+
+
 #((i,j),sword,key,health,tresor,1)
-def Qlearning(pdm,gam,taux,timer):
+def Qlearning(pdm,gam,taux,timer,eps):
+	Trans=pdm.listTrans
+	for key,lisTrans in Trans.items():
+		if key[5]==0:
+			Trans[key]=[trans for trans in lisTrans if trans!=None]
+			
+
 	for key,state in pdm.listState.items():
-		state.initiateQl(len(pdm.listTrans[key]))
-	stateA=pdm.listState[((pdm.grille.size[0]-1,pdm.grille.size[1]-1),0,0,4,0,0)]
-	for i in range (1,timer):
-		if (stateA.type==2):
-			stateA=pdm.listState[((pdm.grille.size[0]-1,pdm.grille.size[1]-1),0,0,4,0,0)]
-		print i
-		Qlstate=stateA.Ql
-		start=False
-		indice=-1
-		print(Qlstate)
-		if all([k==0 for k in Qlstate]):
-			start=True
-		if start==False:
-			print "avant" 
-			print (Qlstate)
-			Qlstate=Qlstate+abs(np.min(Qlstate))
-			Qlstate=Qlstate/np.sum(Qlstate)
-			print Qlstate
-			for k in range(len(Qlstate)):
-				if pdm.listTrans[(stateA.position,stateA.sword,stateA.key,stateA.health,stateA.tresor,stateA.type)][k]==None:
-					Qlstate[k]=0
-			Qlstate/=np.sum(Qlstate)
+		state.initiateQl(len(Trans[key]))
 	
-				
+	for i in range (0,timer):
+		print("###############################################"+str(i))
+		stateA=pdm.listState[((pdm.grille.size[0]-1,pdm.grille.size[1]-1),0,0,4,0,0)]
+		it=1
+		epsilon=0.1
+		while(stateA.type!=2):
+			Qlstate=stateA.Ql
+
+			indice=-1
+
 			nb=random.random()
-			sumi=0
-			for j in range(len(Qlstate)):
-				sumi=sumi+Qlstate[j]
-				if nb<=sumi:
-					indice=j
-					break
+			#print("nb ="+str(nb))
+			if (nb<epsilon):
+				#print("hasard")
+				indice=random.randint(0,len(Qlstate)-1)
+			else:
+				indice=np.argmax(Qlstate);
+
+					
+			#print("indice="+str(indice))
+			stateB,reward=next_state(Trans,indice,stateA)
+			
+			maxB=0
+			if (stateB.type!=2):
+				maxB=np.max(stateB.Ql)
+			#print("avant="+str(stateA.Ql))
+			#print("crrrentstate="+str(stateA.position))
+			new=stateA.Ql[indice]+taux(it)*(reward+(gam*maxB)-stateA.Ql[indice])
+			stateA.Ql[indice]=new
+			#print("new="+str(new))
+			#print("apres="+str(stateA.Ql))
+			#print(reward)
+		
+			#print(stateB.position)
+
+			stateA=stateB
+			it+=1
+			#update of epsilon
+			if (epsilon<=eps):
+				epsilon=eps
+			else:
+				epsilon=epsilon-0.0001
 			
 		
 		
-		else:
-			indice=random.randint(0,len(Qlstate)-1)
-#			print "indice " + str(indice)
-			while (pdm.listTrans[(stateA.position,stateA.sword,stateA.key,stateA.health,stateA.tresor,stateA.type)][indice]==None):
-				indice=random.randint(0,len(Qlstate)-1)
-		print("indice"+str(indice))
-		stateB,reward=next_state(pdm,indice,stateA)
-		maxB=0
-		print(stateA.position)
-		if (stateB.type!=2):
-			maxB=np.max(stateB.Ql)
-
-		stateA.Ql[indice]+=taux(i)*(reward+gam*(maxB-stateA.Ql[indice] ) )
-		print("hello  ")
-		print(stateA.Ql)
-		stateA=stateB
 		####display
 	for i in range(pdm.grille.size[0]):
 		for j in range(pdm.grille.size[1]):
-			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W' :
-				#position sword key tresor type
-				print np.argmax(pdm.listState[((i,j),0,0,4,0,0)].Ql),
+			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W' and  pdm.grille.tab[i][j]!='C':
+				#position sword key health tresor type
+				statecurr=pdm.listState[((i,j),0,0,4,0,0)]
+				positionCurr=statecurr.position
+				maxi=np.argmax(statecurr.Ql)
+				stateNeig=Trans[((i,j),0,0,4,0,0)][maxi].listState[0]
+				positionNeig=stateNeig.position
+
+				if positionNeig[0]==positionCurr[0]-1 and positionNeig[1]==positionCurr[1]:
+					print "0",
+				if positionNeig[0]==positionCurr[0]+1 and positionNeig[1]==positionCurr[1]:
+					print "1",
+				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]-1:
+					print "2",
+				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]+1:
+					print "3",
 			else:
-				print 4,
+				print "4",
 		print
 		
+	pdm.grille.affichage((0,0))
+		
 	return
-def affichage_one_state_policy(pdm,key=0,health=4,tresor=0,sword=0):
-	sword,key,health,tresor
-	key=((0,0),sword,key,health,tresor,0)
-	affichage_of_play(pdm,key)
-
+	
 if __name__ == "__main__":
 	#generate grille
-	grilleA=gr.grille("exemple2.txt")
-	grilleA.generate_solvable(4,4,.3,.2,.1,1,1,3,nb_try=500)
-	grilleA.affichage((grilleA.size[0]-1,grilleA.size[0]-1))
+	grilleA=gr.grille("grille.txt")
+	#grilleA.generate_solvable(4,4,.3,.2,.1,1,1,3,nb_try=500)
+	#grilleA.affichage((grilleA.size[0]-1,grilleA.size[0]-1))
 
 	#Solve
 	pdm=PDM(grilleA)
 	
 #	iteration_value(pdm,0.99)
 	optimal_Pl(pdm,0.99)
-#	Qlearning(pdm,0.99,lambda x:1.0/x,10000)
+	Qlearning(pdm,0.99,lambda x:1.0/x,3000,eps=0.05)
 	
 	#affichage
 	affichage_policy(pdm)

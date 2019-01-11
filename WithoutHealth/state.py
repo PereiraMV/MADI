@@ -5,7 +5,7 @@ Created on Mon Dec 17 15:45:48 2018
 @author: Marc
 """
 import grille as gr
-
+import numpy as np
 
 class state:
 	sword=0
@@ -55,4 +55,9 @@ class state:
 		self.variablePL=None
 		return
 		
+	def initiateQl(self,nbTrans):
+		self.Qlpast=np.zeros(nbTrans)
+		self.Ql=np.zeros(nbTrans)
+		return
+			
 
