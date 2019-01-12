@@ -71,7 +71,7 @@ def action(stateA,listState,grille):
 	if stateA.stateType=='K':
 		proba=[1]
 		if stateA.key==0:
-			reward=1000
+			reward=100000
 			statesB.append(listState[(stateA.position,stateA.sword,1,stateA.tresor,0)])
 			
 		else:
@@ -92,7 +92,7 @@ def action(stateA,listState,grille):
 	if stateA.stateType=='T':
 		proba=[1]
 		if stateA.key==1 and stateA.tresor==0 :
-			reward=1000
+			reward=100000
 			statesB.append(listState[(stateA.position,stateA.sword,stateA.key,1,0)])
 			
 		else:
@@ -130,7 +130,7 @@ def action(stateA,listState,grille):
 	if stateA.stateType=='O':
 		proba=[1]
 		if stateA.key==1 and stateA.tresor==1:
-			reward=10000
+			reward=100000
 			statesB.append(listState[((-2,-2),-2,-2,-2,1)])
 			
 		else:

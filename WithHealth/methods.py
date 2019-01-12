@@ -282,6 +282,7 @@ def Qlearning(pdm,gam,taux,timer,eps):
 
 	for key,state in pdm.listState.items():
 		state.initiateQl(len(Trans[key]))
+		state.reset()
 	
 	for i in range (0,timer):
 		print("###############################################"+str(i))
@@ -290,7 +291,6 @@ def Qlearning(pdm,gam,taux,timer,eps):
 		epsilon=0.1
 		while(stateA.type!=2):
 			Qlstate=stateA.Ql
-
 			indice=-1
 
 			nb=random.random()
@@ -328,10 +328,10 @@ def Qlearning(pdm,gam,taux,timer,eps):
 			
 		
 		
-		####display
+		####display and put in optimal
 	for i in range(pdm.grille.size[0]):
 		for j in range(pdm.grille.size[1]):
-			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W' and  pdm.grille.tab[i][j]!='C':
+			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W':
 				#position sword key health tresor type
 				statecurr=pdm.listState[((i,j),0,0,4,0,0)]
 				positionCurr=statecurr.position
@@ -341,17 +341,22 @@ def Qlearning(pdm,gam,taux,timer,eps):
 
 				if positionNeig[0]==positionCurr[0]-1 and positionNeig[1]==positionCurr[1]:
 					print "0",
+					statecurr.optimal=0
 				if positionNeig[0]==positionCurr[0]+1 and positionNeig[1]==positionCurr[1]:
 					print "1",
+					statecurr.optimal=1
 				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]-1:
 					print "2",
+					statecurr.optimal=2
 				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]+1:
 					print "3",
+					statecurr.optimal=3
 			else:
 				print "4",
+				statecurr.optimal=4
 		print
 		
-	pdm.grille.affichage((0,0))
+	#pdm.grille.affichage((0,0))
 		
 	return
 	
@@ -369,7 +374,7 @@ if __name__ == "__main__":
 	Qlearning(pdm,0.99,lambda x:1.0/x,3000,eps=0.05)
 	
 	#affichage
-	affichage_policy(pdm)
+	#affichage_policy(pdm)
 #	affichage_one_state_policy(pdm,key=0,health=4,tresor=0,sword=0)
 	
 	

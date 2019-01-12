@@ -59,7 +59,6 @@ class state:
 		self.vnext=0
 		self.optimal=-1
 		self.variablePL=None
-		self.Ql=0
 		return
 		
 	def initiateQl(self,nbTrans):

@@ -128,7 +128,7 @@ def optimal_Pl(pdm,gam):
 		for j in range(pdm.grille.size[1]):
 			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W' and pdm.grille.tab[i][j]!='C':
 				#position sword key tresor type
-				print pdm.listState[((i,j),0,1,1,0)].optimal,
+				print pdm.listState[((i,j),0,0,0,0)].optimal,
 			else:
 				print 4,
 		print
@@ -172,13 +172,16 @@ def Qlearning(pdm,gam,taux,timer,eps):
 			
 
 	for key,state in pdm.listState.items():
+		state.reset()
 		state.initiateQl(len(Trans[key]))
-	
+
+	initialState=pdm.listState[((pdm.grille.size[0]-1,pdm.grille.size[1]-1),0,0,0,0)]
 	for i in range (0,timer):
-		print("###############################################"+str(i))
+		#print("###############################################"+str(i))
 		stateA=pdm.listState[((pdm.grille.size[0]-1,pdm.grille.size[1]-1),0,0,0,0)]
 		it=1
 		epsilon=0.1
+		maxdiff=0
 		while(stateA.type!=2):
 			Qlstate=stateA.Ql
 
@@ -209,50 +212,61 @@ def Qlearning(pdm,gam,taux,timer,eps):
 		
 			#print(stateB.position)
 
-			stateA=stateB
-			it+=1
+			
+			
 			#update of epsilon
 			if (epsilon<=eps):
 				epsilon=eps
 			else:
 				epsilon=epsilon-0.0001
+				
+
+			stateA=stateB
+			it+=1
+
+				
 			
 		
 		
-		####display
+		####put solution in optimal
 	for i in range(pdm.grille.size[0]):
 		for j in range(pdm.grille.size[1]):
 			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W' and  pdm.grille.tab[i][j]!='C':
 				#position sword key tresor type
-				statecurr=pdm.listState[((i,j),0,1,1,0)]
+				statecurr=pdm.listState[((i,j),0,0,0,0)]
 				positionCurr=statecurr.position
 				maxi=np.argmax(statecurr.Ql)
-				stateNeig=Trans[((i,j),0,1,1,0)][maxi].listState[0]
+				stateNeig=Trans[((i,j),0,0,0,0)][maxi].listState[0]
 				positionNeig=stateNeig.position
 
 				if positionNeig[0]==positionCurr[0]-1 and positionNeig[1]==positionCurr[1]:
+					statecurr.optimal=0
 					print "0",
 				if positionNeig[0]==positionCurr[0]+1 and positionNeig[1]==positionCurr[1]:
+					statecurr.optimal=1
 					print "1",
 				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]-1:
+					statecurr.optimal=2
 					print "2",
 				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]+1:
+					statecurr.optimal=3
 					print "3",
 			else:
 				print "4",
 		print
+	
 		
 	pdm.grille.affichage((0,0))
 		
 	return
 	
 
-grilleA=gr.grille("grille.txt")
+grilleA=gr.grille("exemple2.txt")
 #grilleA.affichage((0,0))
 pdm=PDM(grilleA)
 #iteration_value(pdm,0.99)
 optimal_Pl(pdm,0.8)
-Qlearning(pdm,0.8,taux=lambda x:1.0/x,timer=3000,eps=0.05)
+Qlearning(pdm,0.8,taux=lambda x:1.0/x,timer=30000,eps=0.05)
 state=pdm.listState[((3,2),0,1,0,1)]
 print(state.Ql)
 
