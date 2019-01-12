@@ -347,32 +347,35 @@ def Qlearning(pdm,gam,taux,timer,eps):
 		####display and put in optimal
 	for i in range(pdm.grille.size[0]):
 		for j in range(pdm.grille.size[1]):
-			if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W':
-				#position sword key health tresor type
-				statecurr=pdm.listState[((i,j),0,0,4,0,0)]
-				positionCurr=statecurr.position
-				maxi=np.argmax(statecurr.Ql)
-				stateNeig=Trans[((i,j),0,0,4,0,0)][maxi].listState[0]
-				positionNeig=stateNeig.position
+			for sword in range (2):
+					for tresor in range (2):
+						for key in range (2):
+							for health in range(1,5):
+								if pdm.grille.tab[i][j]!='M' and pdm.grille.tab[i][j]!='P' and pdm.grille.tab[i][j]!='W':
+									#position sword key health tresor type
+									statecurr=pdm.listState[((i,j),sword,key,health,tresor,0)]
+									positionCurr=statecurr.position
+									maxi=np.argmax(statecurr.Ql)
+									stateNeig=Trans[((i,j),sword,key,health,tresor,0)][maxi].listState[0]
+									positionNeig=stateNeig.position
 
-				if positionNeig[0]==positionCurr[0]-1 and positionNeig[1]==positionCurr[1]:
-					print "0",
-					statecurr.optimal=0
-				if positionNeig[0]==positionCurr[0]+1 and positionNeig[1]==positionCurr[1]:
-					print "1",
-					statecurr.optimal=1
-				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]-1:
-					print "2",
-					statecurr.optimal=2
-				if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]+1:
-					print "3",
-					statecurr.optimal=3
-#			else:
-#				print "4",
-#				statecurr.optimal=4
-		print
+									if positionNeig[0]==positionCurr[0]-1 and positionNeig[1]==positionCurr[1]:
+										#print "0",
+										statecurr.optimal=0
+									if positionNeig[0]==positionCurr[0]+1 and positionNeig[1]==positionCurr[1]:
+										#print "1",
+										statecurr.optimal=1
+									if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]-1:
+										#print "2",
+										statecurr.optimal=2
+									if positionNeig[0]==positionCurr[0] and positionNeig[1]==positionCurr[1]+1:
+										#print "3",
+										statecurr.optimal=3
+								#else:
+									#print "4",
+									#statecurr.optimal=4
 		
-#	pdm.grille.affichage((0,0))
+#pdm.grille.affichage((0,0))
 		
 	return
 	

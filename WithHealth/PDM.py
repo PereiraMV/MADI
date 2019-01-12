@@ -42,7 +42,7 @@ class PDM:
 		self.listState[((-2,-2),-2,-2,-2,-2,2)]=st.state(type=2,param="sucess")
 
 		self.listTrans[((-1,-1),-1,-1,-1,-1,1)]=[ts.transition(self.grille,self.listState[((-1,-1),-1,-1,-1,-1,1)],[self.listState[((-1,-1),-1,-1,-1,-1,2)]],[1],-3000)]
-		self.listTrans[((-2,-2),-2,-2,-2,-2,1)]=[ts.transition(self.grille,self.listState[((-2,-2),-2,-2,-2,-2,2)],[self.listState[((-2,-2),-2,-2,-2,-2,2)]],[1],3000)]
+		self.listTrans[((-2,-2),-2,-2,-2,-2,1)]=[ts.transition(self.grille,self.listState[((-2,-2),-2,-2,-2,-2,2)],[self.listState[((-2,-2),-2,-2,-2,-2,2)]],[1],30000)]
 		self.listTrans[((-1,-1),-1,-1,-1,-1,2)]=[]
 		self.listTrans[((-2,-2),-2,-2,-2,-2,2)]=[]
 		#create the transitions
