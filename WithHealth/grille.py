@@ -104,6 +104,7 @@ class grille:
 		change={'B':0,'W':1,'T':2,'E':3,'K':9,'R':5,'C':6,'S':7,'M':8,'P':4,'O':10}
 		toprint=['T','E','R','C','K','S','M','P','O']
 		m=self.tab[:][:]
+		print m
 		new_m=[]
 		for i in m:
 			new_m.append(map(lambda x:change[x],i))
