@@ -103,6 +103,7 @@ class grille:
 #		plt.subplot(1,2,1)
 		change={'B':0,'W':1,'T':2,'E':3,'K':9,'R':5,'C':6,'S':7,'M':8,'P':4,'O':10}
 		toprint=['T','E','R','C','K','S','M','P','O']
+		color={'T':'y','E':'orange','K':'silver','R':'cyan','C':'magenta','S':'g','M':'k','P':'b','O':'y'}
 		m=self.tab[:][:]
 		print m
 		new_m=[]
@@ -127,9 +128,10 @@ class grille:
 			for j in range(len(self.tab)):
 				az=self.tab[i][j]
 				if az in toprint:
+					c=color[az]
 					az='$'+az+'$'
 					if az=='$M$' : az='_'
-					ax1.scatter(j,i,marker=az,s=200)
+					ax1.scatter(j,i,marker=az,color=c,s=200)
 		
 		
 #		plt.imshow(m,cmap=cmap,norm=norm,interpolation="none")
